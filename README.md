@@ -1,7 +1,7 @@
 running 20 players updating their location  25fps
 
 every update is a frame = 40ms
-
+```
 🚀 ~ updates sample count: 50300
 🚀 ~ players average latency: {
   '178': 153.27988071570562,
@@ -23,4 +23,4 @@ every update is a frame = 40ms
   '194': 102.8158051689864,
   '195': 103.80630218687823,
   '197': 105.22662027832995
-}
+}```
