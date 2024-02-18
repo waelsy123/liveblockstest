@@ -5,7 +5,7 @@ latency is calculated in milliseconds.
 
 1. updates presence 25fps
 
-every update is a frame = 40ms // (1000/25=40ms)
+every update is a frame = 40ms // (X= 1000/25=40ms)
 ```
 🚀 ~ updates sample count: 50300
 🚀 ~ players average latency: {
@@ -33,7 +33,7 @@ every update is a frame = 40ms // (1000/25=40ms)
 
 2. updates presence 50fps
 
-every update is a frame = 20ms
+every update is a frame = 20ms // (X= 1000/50=20ms)
 
 ```
 🚀 ~ updates sample count: 10000
@@ -60,9 +60,9 @@ every update is a frame = 20ms
 }
 ```
 
-3. updates presence 100fps
+3. updates presence 100fps 
 
-10ms per update
+10ms per update  // (X= 1000/100=10ms)
 
 ```
 🚀 ~ updates sample count: 19500
