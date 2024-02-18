@@ -1,8 +1,11 @@
-running 20 players
+running 20 players connected to the game concurrently, each player update their presence every X ms and took the average of Y samples to calculate latency - the latency between player actual position verse what other players receives, it worth to mention that 10 players where running on my local machine EU and other 10 players via server in the US.
+
+latency is calculated in milliseconds. 
+
 
 1. updates presence 25fps
 
-every update is a frame = 40ms
+every update is a frame = 40ms // (1000/25=40ms)
 ```
 🚀 ~ updates sample count: 50300
 🚀 ~ players average latency: {
