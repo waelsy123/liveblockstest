@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>SmartFoxServer 2X </title>
+	<script type="text/javascript" src="sfs2x-api.min.js"></script>;
+
+</head>
+
+<body>
+
+	<script>
+
+		function spinRoom(prefix, roomName) {
+		console.log("🚀 ~ spinRoom ~ roomName:", roomName)
+
+			function spinClient(username) {
+				// Create configuration object
+				var config = {};
+				config.host = "8.211.13.151";
+				config.port = 8080;
+				config.useSSL = false;
+				config.zone = "BasicExamples";
+				config.debug = false;
+
+				// Create SmartFox client instance
+				var sfs = new SFS2X.SmartFox(config);
+
+				sfs.addEventListener(SFS2X.SFSEvent.CONNECTION, onConnection, this);
+				sfs.connect(config.host, config.port);
+
+
+				sfs.addEventListener(SFS2X.SFSEvent.LOGIN_ERROR, onLoginError, this);
+				sfs.addEventListener(SFS2X.SFSEvent.LOGIN, onLogin, this);
+				sfs.addEventListener(SFS2X.SFSEvent.ROOM_JOIN, onRoomJoin, this);
+				sfs.addEventListener(SFS2X.SFSEvent.ROOM_JOIN_ERROR, onRoomJoinError, this);
+				sfs.addEventListener(SFS2X.SFSEvent.PUBLIC_MESSAGE, onPublicMessage, this);
+
+				function onConnection(evtParams) {
+					if (evtParams.success) {
+						// console.log("Connected to SmartFoxServer 2X!");
+						sfs.send(new SFS2X.LoginRequest(username, "kermitPwd", null, "BasicExamples"));
+					} else
+						console.log("Connection failed. Is the server running at all?");
+				}
+
+				function onLogin(evtParams) {
+					// console.log("Login successful!");
+					sfs.send(new SFS2X.JoinRoomRequest(roomName));
+				}
+
+				function onLoginError(evtParams) {
+					// console.log("Login failed. Error: " + evtParams.errorMessage);
+				}
+
+				function onRoomJoinError(evtParams) {
+					// console.log("Room join failed. Error: " + evtParams.errorMessage);
+				}
+
+				function onRoomJoin(evtParams) {
+					// console.log("Joined room: " + evtParams.room.name);
+					setInterval(() => {
+						var message = JSON.stringify({
+							timestamp: Date.now()
+						});
+						sfs.send(new SFS2X.PublicMessageRequest(message));
+					}, 30);
+				}
+
+				let av = 20;
+				let count = 0;
+
+				function onPublicMessage(evtParams) {
+					if (username === prefix + "1" && (evtParams.sender.name === prefix + "5")) {
+						var receivedMessage = JSON.parse(evtParams.message);
+						var currentTime = Date.now();
+						var latency = currentTime - receivedMessage.timestamp;
+						av = ((av * count) + latency) / (count + 1);
+						count++;
+
+						if (count % 200 == 0) {
+							console.log("latency: " + latency);
+							console.log("average latency of " + evtParams.sender.name + ": " + parseInt(av) + " ms" + " | count: " + count);
+						}
+					}
+				}
+			}
+
+			for (var i = 0; i < 11; i++) {
+				spinClient(prefix + i.toString());
+			}
+		}
+
+		async function spinRooms() {
+			for (let i = 1; i <= 16; i++) {
+				await spinRoom(`r${i}-`, `room${i}`);
+				console.log(`Room ${i} spun up.`);
+				await new Promise(resolve => setTimeout(resolve, 5000)); 
+			}
+		}
+
+		spinRooms();
+	</script>
+</body>
+
+</html>
+
+<!-- latency: 143
+index.html:83 average latency of r2-5: 79 ms | count: 4000
+index.html:82 latency: 44
+index.html:83 average latency of r8-5: 72 ms | count: 3200
+index.html:82 latency: 62
+index.html:83 average latency of r9-5: 73 ms | count: 3200
+index.html:82 latency: 26
+index.html:83 average latency of r6-5: 63 ms | count: 3400
+index.html:82 latency: 299
+index.html:83 average latency of r3-5: 66 ms | count: 4000
+index.html:82 latency: 30
+index.html:83 average latency of r7-5: 58 ms | count: 3400 -->
